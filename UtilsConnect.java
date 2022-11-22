@@ -1,11 +1,7 @@
 import java.io.Closeable;
 import java.io.IOException;
 
-/**
- * 工具类  用于关闭连接
- * @author 久拥-
- *
- */
+//关闭连接的工具类
 public class UtilsConnect {
 	public static void close(Closeable ... connections) {
 		for (Closeable connect : connections) {

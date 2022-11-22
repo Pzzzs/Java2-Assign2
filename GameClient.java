@@ -420,12 +420,7 @@ public class GameClient extends Application implements GameConstants {
     private void enterTheChess(int player)
     {
         linePane.setOnMouseClicked(e1 -> {
-//            try {
-//                Socket socket = new Socket("127.0.0.1", 9520);
-//
-//            }catch (Exception e){
-//                new PopUpWindow().display("\n连接服务器失败\n ");
-//            }
+
             if (myTurn) {
                 flag:
                 for (int i = 0; i < 3; i++) {

@@ -134,11 +134,6 @@ class ServerThread extends Thread implements Runnable, GameConstants {
 				release();
 			}
 		}
-		try {
-			toUser2.writeInt(20);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 	}
 
     //判断是否需要等待
@@ -260,11 +255,6 @@ class ServerThread extends Thread implements Runnable, GameConstants {
 					// 释放资源
 					release();
 				}
-			}
-			try {
-				toUser2.writeInt(20);
-			} catch (IOException e) {
-				e.printStackTrace();
 			}
 		}
 

@@ -33,6 +33,7 @@ public class GameServer extends Application implements GameConstants {
 
 		primaryStage.setScene(scene);
 		primaryStage.setTitle("Tic-tac-toe GameServer");
+		primaryStage.show();
 
 		// 关闭线程
 		primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>()
