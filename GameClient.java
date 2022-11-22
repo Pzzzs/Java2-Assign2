@@ -11,10 +11,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.net.Socket;
+import java.io.*;
 
 public class GameClient extends Application implements GameConstants {
 
@@ -26,35 +23,35 @@ public class GameClient extends Application implements GameConstants {
   private Label myTimeChess =  new Label("");
   private Label yourChess = new Label("");
 
-    //主窗口的坐标
+  //主窗口的坐标
   public static double x;
   public static double y;
 
-    //聊天内容
+  //聊天内容
   private String str = null;
-    //等待接收数据
+  //等待接收数据
   private boolean stop = true;
-    //判断游戏进程
+  //判断游戏进程
   private int data;
 
-    //棋盘
+  //棋盘
   private static int[][] chess = new int[3][3];
-    //棋子
+  //棋子
   private ImageView[][] circles = new ImageView[3][3];
-    //确认是哪个玩家
+  //确认是哪个玩家
   private int player = 0;
-    //我的棋子颜色
+  //我的棋子颜色
   private int myChess = 0;
-    //对手棋子颜色
+  //对手棋子颜色
   private int otherChess = 0;
-    //我的步骤
+  //我的步骤
   private boolean myTurn = false;
-    //等待玩家下棋
+  //等待玩家下棋
   private boolean waiting = true;
-    //当前棋子坐标
+  //当前棋子坐标
   private int rowNow;
   private int colNow;
-    //游戏是否继续
+  //游戏是否继续
   private boolean continueToPlay = true;
 
   private DataInputStream fromServer;
@@ -64,117 +61,105 @@ public class GameClient extends Application implements GameConstants {
         launch(args);
     }
 
-    @Override
-    public void start(Stage primaryStage)
-    {
+  @Override
+  public void start(Stage primaryStage) {
 
-        //提示语字体粗细
-        myTimeChess.setFont(new Font(30));
-        myTimeChess.setTextFill(Color.BLACK);
-        yourChess.setFont(new Font(30));
-        yourChess.setTextFill(Color.BLACK);
+    //提示语字体粗细
+    myTimeChess.setFont(new Font(30));
+    myTimeChess.setTextFill(Color.BLACK);
+    yourChess.setFont(new Font(30));
+    yourChess.setTextFill(Color.BLACK);
 
-        //游戏进入界面
-        //Stage primaryStage = new Stage();
-        Label label = new Label("\n  Tic-tac-toe\n  ");
-        label.setFont(new Font(100));
-        btBegin.setFont(new Font(50));
-        btExit.setFont(new Font(50));
+    //游戏进入界面
+    //Stage primaryStage = new Stage();
+    Label label = new Label("\n  Tic-tac-toe\n  ");
+    label.setFont(new Font(100));
+    btBegin.setFont(new Font(50));
+    btExit.setFont(new Font(50));
+    btBack.setFont(new Font(30));
 
-        btBack.setFont(new Font(30));
+    HBox hBox1 = new HBox(15);
+    hBox1.getChildren().add(btBegin);
+    hBox1.setPadding(new Insets(0,0,0,190));
 
+    HBox hBox2 = new HBox(15);
+    hBox2.getChildren().add(btExit);
+    hBox2.setPadding(new Insets(0,0,0,190));
 
+    VBox vBox1 = new VBox(15);
+    vBox1.getChildren().addAll(label,hBox1,hBox2);
 
-        HBox hBox1 = new HBox(15);
-        hBox1.getChildren().add(btBegin);
-        hBox1.setPadding(new Insets(0,0,0,190));
+    Pane pane1 = new Pane(); //pane1是初始页面
+    pane1.getChildren().add(vBox1);
 
-        HBox hBox2 = new HBox(15);
-        hBox2.getChildren().add(btExit);
-        hBox2.setPadding(new Insets(0,0,0,190));
+    Scene scene1 = new Scene(pane1,640,740);
+    primaryStage.setResizable(false);
+    primaryStage.setTitle("Tic-tac-toe");
+    primaryStage.setScene(scene1);
+    primaryStage.show();
 
-        VBox vBox1 = new VBox(15);
-        vBox1.getChildren().addAll(label,hBox1,hBox2);
+    //获取主窗口的坐标
+    new Thread(() ->
+      {
+        try {
+          while (true) {
+            x = primaryStage.getX();
+            y = primaryStage.getY();
+            Thread.sleep(100);
+          }
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
 
-        Pane pane1 = new Pane(); //pane1是初始页面
+      }).start();
 
-        pane1.getChildren().add(vBox1);
-        Scene scene1 = new Scene(pane1,640,740);
-        primaryStage.setResizable(false);
-        primaryStage.setTitle("Tic-tac-toe");
-        primaryStage.setScene(scene1);
-        primaryStage.show();
+      //游戏界面
+      HBox hBox = new HBox(20);
+      hBox.getChildren().addAll(btBack, new StackPane(yourChess), new StackPane(myTimeChess));
+      hBox.setPadding(new Insets(30, 300, 0, 30));
 
-        //获取主窗口的坐标
-        new Thread(() ->
-        {
-            try
-            {
-                while (true)
-                {
-                    x = primaryStage.getX();
-                    y = primaryStage.getY();
-                    Thread.sleep(100);
-                }
-            }
-            catch (Exception e) {
-                e.printStackTrace();
-            }
+      BorderPane borderPane = new BorderPane();
+      borderPane.setCenter(new Label("  "));
+      borderPane.setLeft(linePane);
+      borderPane.setBottom(hBox);
 
-        }).start();
-
-        //游戏界面
-        HBox hBox = new HBox(20);
-        hBox.getChildren().addAll(btBack, new StackPane(yourChess), new StackPane(myTimeChess));
-        hBox.setPadding(new Insets(30, 300, 0, 30));
-
-        BorderPane borderPane = new BorderPane();
-        borderPane.setCenter(new Label("  "));
-        borderPane.setLeft(linePane);
-        borderPane.setBottom(hBox);
-
-        Pane pane = new Pane();
-        pane.getChildren().add(new ImageView("棋盘素材/棋盘背景.jpg"));
-        pane.getChildren().add(borderPane);
+      Pane pane2 = new Pane();
+      pane2.getChildren().add(new ImageView("棋盘素材/棋盘背景.jpg"));
+      pane2.getChildren().add(borderPane);
 
 
-        //开始游戏
-        btBegin.setOnAction(e -> {
-            //连接服务器
-            ConnectServer.connectionAgain();
-            //初始化棋盘
-            initializeChess();
-            //游戏开始
-            connectToServer();
+      //开始游戏
+      btBegin.setOnAction(e -> {
+        //连接服务器
+        ConnectServer.connectionAgain();
+        //初始化棋盘
+        initializeChess();
+        //游戏开始
+        connectToServer();
+        scene1.setRoot(pane2);
+      });
+      //退出游戏
+      btExit.setOnAction(event -> {
+        System.exit(0);
+      });
 
-            scene1.setRoot(pane);
+      //退出对战
+      btBack.setOnAction(e ->{
+        continueToPlay = false;
+        waiting = false;
+        stop = false;
+        release();
+        scene1.setRoot(pane1);
+      });
 
-        });
-        //退出游戏
-        btExit.setOnAction(event -> {
-            System.exit(0);
-        });
-
-        //退出对战
-        btBack.setOnAction(e ->{
-            continueToPlay = false;
-            waiting = false;
-            stop = false;
-            release();
-            scene1.setRoot(pane1);
-        });
-
-
-
-        //关闭线程
-        primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-            @Override
-            public void handle(WindowEvent event) {
+      //关闭线程
+      primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+        @Override
+          public void handle(WindowEvent event) {
                 System.exit(0);
             }
-        });
-
-    }
+      });
+  }
 
     //游戏线程
     private void connectToServer()
@@ -258,7 +243,7 @@ public class GameClient extends Application implements GameConstants {
 
     }
 
-     //接收数据
+    //接收数据
     private void getData()
     {
         new Thread(()->{
@@ -309,7 +294,6 @@ public class GameClient extends Application implements GameConstants {
 							Platform.runLater(() ->
 							{
 								new PopUpWindow().display("\n对手已断开连接\n ");
-                                System.out.println("对手已断开连接");
 							});
 							myTurn = false;
 							// 释放所有等待后结束游戏
@@ -327,6 +311,9 @@ public class GameClient extends Application implements GameConstants {
 					release();
 				}
 			}
+            if (data!=3 && data!=4 && data!=5){
+                System.out.println("连接断开，游戏结束");
+            }
         }).start();
     }
 

@@ -15,6 +15,7 @@ import java.util.Date;
 
 public class GameServer extends Application implements GameConstants {
 
+	TextArea textArea;
 	static int cnt=1;
 
 	public static void main(String[] args)
@@ -25,11 +26,11 @@ public class GameServer extends Application implements GameConstants {
 	@Override
 	public void start(Stage primaryStage)
 	{
-		// UI界面
-		TextArea textArea = new TextArea();
+		//界面
+		textArea = new TextArea();
 		textArea.setEditable(false);
 
-		Scene scene = new Scene(new Pane(textArea), 650, 250);
+		Scene scene = new Scene(new Pane(textArea), 550, 200);
 
 		primaryStage.setScene(scene);
 		primaryStage.setTitle("Tic-tac-toe GameServer");
@@ -52,16 +53,12 @@ public class GameServer extends Application implements GameConstants {
 			{
 				// 一个服务器端口
 				serverSocket = new ServerSocket(1234);
-				Platform.runLater(() ->
-				{
-					textArea.appendText(new Date() + "：服务器端口为1234\n");
-				});
 				// 等待用户连接
 				while (true)
 				{
 					Platform.runLater(() ->
 					{
-						textArea.appendText("\n" + new Date() + "：等待玩家连接\n");
+						textArea.appendText("GAME"+cnt+"等待玩家连接\n ");
 						System.out.println("GAME"+cnt+"等待玩家连接");
 						System.out.println();
 					});
@@ -70,31 +67,33 @@ public class GameServer extends Application implements GameConstants {
 					Socket user1 = serverSocket.accept();
 					Platform.runLater(() ->
 					{
-						textArea.appendText(new Date() + "：玩家一连接成功！\n");
+						textArea.appendText("GAME"+cnt+"玩家一连接成功\n ");
 						System.out.println("GAME"+cnt+"玩家一连接成功");
 					});
 					// IO流
 					DataOutputStream toUser1 = new DataOutputStream(user1.getOutputStream());
-					// 提示玩家一其为黑子
+					// 提示玩家一其为X
 					toUser1.writeInt(player1);
 
 					// 等待用户二连接
 					Socket user2 = serverSocket.accept();
 					Platform.runLater(() ->
 					{
-						textArea.appendText(new Date() + "：玩家二连接成功！\n");
-						textArea.appendText(new Date() + "：匹配成功！\n");
+						textArea.appendText("GAME"+cnt+"玩家二连接成功\n ");
+						textArea.appendText("匹配成功\n ");
 						System.out.println("GAME"+cnt+"玩家二连接成功");
 						System.out.println("GAME"+cnt+"匹配成功");
 					});
 					// IO流
 					DataOutputStream toUser2 = new DataOutputStream(user2.getOutputStream());
-					// 提示玩家二其为白子
+					// 提示玩家二其为O
 					toUser2.writeInt(player2);
 
 					// 开始一局游戏
 					Thread.sleep(100);
-					new Thread(new ServerThread(user1, user2, cnt)).start();
+					ServerThread serverThread = new ServerThread(user1, user2, cnt);
+					serverThread.gameServer=this;
+					new Thread(serverThread).start();
 					Thread.sleep(100);
 					cnt++;
 				}

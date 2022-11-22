@@ -1,12 +1,10 @@
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.Socket;
 
 //获取服务器连接
 public class ConnectServer {
     //单例模式
-    private final static ConnectServer connect  = new ConnectServer();
+    private final static ConnectServer connect = new ConnectServer();
     private static Socket socket;
     private ConnectServer() {
     }

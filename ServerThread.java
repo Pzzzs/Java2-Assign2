@@ -1,6 +1,4 @@
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.Socket;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -9,6 +7,9 @@ class ServerThread extends Thread implements Runnable, GameConstants {
     private int row, col;
     private boolean waiting = true;
     private boolean chessBack = false;
+
+	//访问调用它的类
+	GameServer gameServer;
 
     //游戏线程结束标志
     private boolean exit = false;
@@ -23,8 +24,8 @@ class ServerThread extends Thread implements Runnable, GameConstants {
     //棋盘
     private int[][] cell = new int[3][3];
 
-    private  DataOutputStream toUser1;
-    private  DataOutputStream toUser2;
+    private DataOutputStream toUser1;
+    private DataOutputStream toUser2;
 
     public ServerThread(Socket user1, Socket user2, int cnt) {
 
@@ -58,7 +59,9 @@ class ServerThread extends Thread implements Runnable, GameConstants {
 
     @Override
 	public void run() {
+		gameServer.textArea.appendText("GAME"+cnt+" X's turn\n ");
 		System.out.println("GAME"+cnt+" X's turn");
+
 		System.out.println();
 		try {
 			// 告诉玩家 1 开始
@@ -76,6 +79,7 @@ class ServerThread extends Thread implements Runnable, GameConstants {
 
 				// 判断玩家一是否胜出
 				if (isWon(1)) {
+					gameServer.textArea.appendText("GAME"+cnt+" X获胜\n ");
 					System.out.println("GAME"+cnt+" X获胜");
 					toUser1.writeInt(1);
 					toUser1.writeInt(player1_won);
@@ -86,6 +90,7 @@ class ServerThread extends Thread implements Runnable, GameConstants {
 					exit = true;
 					break;
 				} else if (isFull()) {
+					gameServer.textArea.appendText("GAME"+cnt+" 平局\n ");
 					System.out.println("GAME"+cnt+" 平局");
 					toUser1.writeInt(1);
 					toUser1.writeInt(draw);
@@ -98,6 +103,7 @@ class ServerThread extends Thread implements Runnable, GameConstants {
 				} else {
 					// 没有玩家胜出，继续游戏
 					if (!exit){
+						gameServer.textArea.appendText("GAME"+cnt+" O's turn\n ");
 						System.out.println("GAME"+cnt+" O's turn");
 					}
 					toUser2.writeInt(1);
@@ -111,6 +117,7 @@ class ServerThread extends Thread implements Runnable, GameConstants {
 				cell[row][col] = 2;
 
 				if (isWon(2)) {
+					gameServer.textArea.appendText("GAME"+cnt+" O获胜\n ");
 					System.out.println("GAME"+cnt+" O获胜");
 					toUser1.writeInt(1);
 					toUser1.writeInt(player2_won);
@@ -123,6 +130,7 @@ class ServerThread extends Thread implements Runnable, GameConstants {
 				} else {
 					// 没有玩家胜出，继续游戏
 					if (!exit){
+						gameServer.textArea.appendText("GAME"+cnt+" X's turn\n ");
 						System.out.println("GAME"+cnt+" X's turn");
 					}
 					toUser1.writeInt(1);
