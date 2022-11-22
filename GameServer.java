@@ -11,13 +11,9 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.Date;
 
-public class GameServer extends Application implements GameConstants
-{
-
-	public static ArrayList<ServerThread> list =new ArrayList<ServerThread>();
+public class GameServer extends Application implements GameConstants {
 
 	static int cnt=1;
 
@@ -37,7 +33,6 @@ public class GameServer extends Application implements GameConstants
 
 		primaryStage.setScene(scene);
 		primaryStage.setTitle("Tic-tac-toe GameServer");
-//		primaryStage.show();
 
 		// 关闭线程
 		primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>()

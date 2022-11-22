@@ -268,9 +268,7 @@ class ServerThread extends Thread implements Runnable, GameConstants {
 			}
 		}
 
-		/**
-		 * 用于关闭流
-		 */
+		//关闭流
 		private void release() {
 			exit = true;
 			UtilsConnect.close(user1, user2, fromUser1, toUser2);

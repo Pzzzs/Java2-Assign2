@@ -3,21 +3,15 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 
-/**
- * 获取服务器的连接
- */
+//获取服务器连接
 public class ConnectServer {
     //单例模式
-    private  final static ConnectServer connect  = new ConnectServer();
+    private final static ConnectServer connect  = new ConnectServer();
     private static Socket socket;
-
     private ConnectServer() {
-
     }
 
-    /**
-     * 连接服务器或者重新连接
-     */
+    //连接服务器
     public static void connectionAgain() {
         try {
             //建立连接（本地连接）
@@ -34,20 +28,12 @@ public class ConnectServer {
         return connect;
     }
 
-    /**
-     * 获取IO连接
-     * @return
-     * @throws IOException
-     */
+    //获取IO连接
     public DataInputStream getDataInputStream() throws IOException {
         return new DataInputStream(socket.getInputStream());
     }
 
-    /**
-     * 获取IO连接
-     * @return
-     * @throws IOException
-     */
+    //获取IO连接
     public DataOutputStream getDataOutputStream() throws IOException {
         return new DataOutputStream(socket.getOutputStream());
     }

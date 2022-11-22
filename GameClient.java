@@ -18,49 +18,49 @@ import java.net.Socket;
 
 public class GameClient extends Application implements GameConstants {
 
-    private static LinePane linePane = LinePane.getInstance();
+  private static LinePane linePane = LinePane.getInstance();
 
-    private Button btBegin = new Button("开始游戏");
-    private Button btExit = new Button("退出游戏");
-    private Button btBack = new Button("退出");
-    private Label myTimeChess =  new Label("");
-    private Label yourChess = new Label("");
+  private Button btBegin = new Button("开始游戏");
+  private Button btExit = new Button("退出游戏");
+  private Button btBack = new Button("退出");
+  private Label myTimeChess =  new Label("");
+  private Label yourChess = new Label("");
 
     //主窗口的坐标
-    public static double x;
-    public static double y;
+  public static double x;
+  public static double y;
 
     //聊天内容
-    private String str = null;
+  private String str = null;
     //等待接收数据
-    private boolean stop = true;
+  private boolean stop = true;
     //判断游戏进程
-    private int data;
+  private int data;
 
     //棋盘
-    private static int[][] chess = new int[3][3];
+  private static int[][] chess = new int[3][3];
     //棋子
-    private ImageView[][] circles = new ImageView[3][3];
+  private ImageView[][] circles = new ImageView[3][3];
     //确认是哪个玩家
-    private int player = 0;
+  private int player = 0;
     //我的棋子颜色
-    private int myChess = 0;
+  private int myChess = 0;
     //对手棋子颜色
-    private int otherChess = 0;
+  private int otherChess = 0;
     //我的步骤
-    private boolean myTurn = false;
+  private boolean myTurn = false;
     //等待玩家下棋
-    private boolean waiting = true;
+  private boolean waiting = true;
     //当前棋子坐标
-    private int rowNow;
-    private int colNow;
+  private int rowNow;
+  private int colNow;
     //游戏是否继续
-    private boolean continueToPlay = true;
+  private boolean continueToPlay = true;
 
-    private DataInputStream fromServer;
-    private DataOutputStream toServer;
+  private DataInputStream fromServer;
+  private DataOutputStream toServer;
 
-    public static void main(String[] args) {
+  public static void main(String[] args) {
         launch(args);
     }
 
@@ -83,7 +83,7 @@ public class GameClient extends Application implements GameConstants {
 
         btBack.setFont(new Font(30));
 
-        VBox vBox1 = new VBox(15);
+
 
         HBox hBox1 = new HBox(15);
         hBox1.getChildren().add(btBegin);
@@ -93,6 +93,7 @@ public class GameClient extends Application implements GameConstants {
         hBox2.getChildren().add(btExit);
         hBox2.setPadding(new Insets(0,0,0,190));
 
+        VBox vBox1 = new VBox(15);
         vBox1.getChildren().addAll(label,hBox1,hBox2);
 
         Pane pane1 = new Pane(); //pane1是初始页面
@@ -356,9 +357,9 @@ public class GameClient extends Application implements GameConstants {
 
         //等待接收服务器的数据
         waitingForElement();
-        if(!continueToPlay)
+        if(!continueToPlay){
             return;
-
+        }
         if (data == player1_won) {
             //结束游戏
             continueToPlay = false;
@@ -369,8 +370,7 @@ public class GameClient extends Application implements GameConstants {
                 Platform.runLater(() -> {
                     new PopUpWindow().display("\n你赢了\n ");
                 });
-            }
-            else if (myChess == 2) {
+            } else if (myChess == 2) {
                 //receiveMove();
                 Platform.runLater(() -> {
                     new PopUpWindow().display("\n你输了\n ");
@@ -385,8 +385,7 @@ public class GameClient extends Application implements GameConstants {
                 Platform.runLater(() -> {
                     new PopUpWindow().display("\n你赢了\n ");
                 });
-            }
-            else if (myChess == 1) {
+            } else if (myChess == 1) {
                 //receiveMove();
                 Platform.runLater(() -> {
                     new PopUpWindow().display("\n你输了\n ");
@@ -400,8 +399,7 @@ public class GameClient extends Application implements GameConstants {
             Platform.runLater(() -> {
                 new PopUpWindow().display("\n平局\n ");
             });
-        }
-        else {
+        } else {
             //receiveMove();
             myTurn = true;
         }
@@ -517,9 +515,7 @@ public class GameClient extends Application implements GameConstants {
         otherChess = 0;
     }
 
-    /**
-	 * 用于关闭流
-	 */
+    //关闭流
 	private void release()
 	{
 		continueToPlay = false;
